@@ -1,0 +1,131 @@
+pipeline {
+    agent any 
+    stages {
+        stage('Build') { 
+            steps {
+                // 
+            }
+        }
+        stage('Test') { 
+            steps {
+                // 
+            }
+        }
+        stage('Deploy') { 
+            steps {
+                // 
+            }
+        }
+    }
+}
+
+
+
+
+
+*Tomcat*
+
+pipeline {
+    agent any 
+    stages {
+        stage('Pull code') { 
+            steps {
+                git credentialsId: 'GitLab-cred', url: 'https://gitlab.com/Saket0610/cbz-student-ui.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo "code is building"
+                sh "mvn clean package"
+            }
+        }    
+        stage('Deploy to server') {
+            steps {
+               deploy adapters: [tomcat9(path: '', url: 'http://172.31.42.177:8080')], contextPath: '/', war: '**/*.war'
+            }
+        }
+    }     
+}
+
+
+
+
+
+pipeline{
+    agent any
+    stages{
+        stage("A"){
+            steps{
+                git branch: 'J2EE', url: 'https://github.com/shashirajraja/onlinebookstore'
+                sh "mvn clean package"
+            }
+            post{
+                always{
+                    echo "========always========"
+                }
+                success{
+                    echo "========A executed successfully========"
+                }
+                failure{
+                    echo "========A execution failed========"
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+pipeline{
+    agent any
+    stages{
+        stage("A"){
+            steps{
+               git credentialsId: 'yes', url: 'https://gitlab.com/smithgiripunje/cbz-student-ui.git'
+               sh "mvn clean package"
+               deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://43.204.100.158:8080/')], contextPath: '/', war: '*/.war'
+            }
+            post{
+                always{
+                    echo "========always========"
+                }
+                success{
+                    echo "========A executed successfully========"
+                }
+                failure{
+                    echo "========A execution failed========"
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+*online_book_store*
+
+pipeline {
+    agent any 
+    stages {
+        stage('Pull code') { 
+            steps {
+                git branch: 'main', credentialsId: 'github_cred', url: 'https://github.com/Saket0610/demo-project.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo "code is building"
+                sh "mvn clean package"
+            }
+        }    
+        stage('Deploy to server') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'online-book-cred', path: '', url: 'http://172.31.4.77:8080')], contextPath: '/', war: '**/*.war'
+            }
+        }
+    }     
+}
